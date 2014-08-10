@@ -1,0 +1,34 @@
+## Have assumed the data household_power_consumption.txt is already present in current working directory
+## Load the data household_power_consumption.txt file from current directory  
+## 2+ million rows that require about 133MB in memory space
+data <- read.table("household_power_consumption.txt",sep=";",header=T,colClasses=c("character","character","numeric","numeric","numeric","numeric","numeric","numeric","numeric"),na.strings="?")
+
+
+# Extract needed dataset
+data <- data[(data$Date=="1/2/2007" | data$Date=="2/2/2007"),]
+
+# Combine Date and Time
+data$DateTime <- strptime(paste(data$Date, data$Time, sep=" "), format="%d/%m/%Y %H:%M:%S")
+
+
+# Open png device
+png("plot4.png", width=480, height=480)
+
+# Plot the graph
+par(mfrow=c(2, 2))
+
+plot(data$DateTime, data$Global_active_power, type="l", 
+     xlab="", ylab="Global Active Power")
+plot(data$DateTime, data$Voltage, type="l", 
+     xlab="datetime", ylab="Voltage")
+plot(data$DateTime, data$Sub_metering_1, type="l", 
+     xlab="", ylab="Energy sub metering")
+lines(data$DateTime, data$Sub_metering_2, col="red")
+lines(data$DateTime, data$Sub_metering_3, col="blue")
+legend("topright", bty="n", lty=1, col=c("black", "red", "blue"), 
+       legend=c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"))
+plot(data$DateTime, data$Global_reactive_power, type="l", 
+     xlab="datetime", ylab="Global_reactive_Power")
+
+# Turn off device
+dev.off()
